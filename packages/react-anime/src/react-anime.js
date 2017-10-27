@@ -34,7 +34,7 @@ export class Anime extends Component {
     let { children } = nextProps;
     let prevChildren = this.props.children;
 
-    // simply equal by ref so skip below process
+    // Fast check changes by ref
     if (children === prevChildren) return;
 
     if (!Array.isArray(children))     children     = [children];
