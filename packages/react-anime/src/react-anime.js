@@ -15,9 +15,12 @@ export class Anime extends Component {
 
     // Time based children store
     let { children } = props;
-    if (!Array.isArray(children)) children = [children];
+    if (!Array.isArray(children)) {
+      children = [children];
+    }
+
     this.children = {
-      cur: children,
+      cur:  children,
       prev: [],
       next: []
     };
@@ -31,7 +34,10 @@ export class Anime extends Component {
     let { children } = nextProps;
     let prevChildren = this.props.children;
 
-    if (!Array.isArray(children)) children = [children];
+    // simply equal by ref so skip below process
+    if (children === prevChildren) return;
+
+    if (!Array.isArray(children))     children     = [children];
     if (!Array.isArray(prevChildren)) prevChildren = [prevChildren];
 
     // Determine diff children
@@ -47,8 +53,8 @@ export class Anime extends Component {
 
     // Split children to current, old, and new
     this.children = {
-      cur: children.filter(c => difChildren.indexOf(c) < 0),
-      prev: childrenWereRemoved ? difChildren : this.children.prev,
+      cur:   children.filter(c => difChildren.indexOf(c) < 0),
+      prev:  childrenWereRemoved ? difChildren : this.children.prev,
       next: !childrenWereRemoved ? difChildren : this.children.next
     };
 
@@ -56,17 +62,13 @@ export class Anime extends Component {
   }
 
   createAnime = (props = this.props) => {
-
     let animeProps = { targets: this.targets, ...props };
 
     anime.remove(this.targets);
     delete animeProps.children;
 
-    if (typeof this.anime === undefined)
+    if (!this.anime)
       this.anime = anime(animeProps);
-    else {
-      this.anime = anime(animeProps);
-    }
   };
 
   addTarget = newTarget => {
@@ -82,8 +84,9 @@ export class Anime extends Component {
 
     return (
       <g style={{ ...style }}>
-        {cur.map((child, i) =>
-          React.cloneElement(child, { key: i, ref: this.addTarget }))}
+        { cur.map((child, i) =>
+          React.cloneElement(child, { key: i, ref: this.addTarget }))
+        }
       </g>
     );
   }
